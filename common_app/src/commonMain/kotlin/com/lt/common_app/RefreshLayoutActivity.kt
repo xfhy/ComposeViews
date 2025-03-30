@@ -24,11 +24,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lt.common_app.base.BaseComposeActivity
 import com.lt.compose_views.compose_pager.ComposePager
@@ -145,6 +147,16 @@ class RefreshLayoutActivity : BaseComposeActivity() {
     private fun MyRefreshableLazyColumn() {
         var isLoadFinish by rememberMutableStateOf { false }
         var isLoadMoreFail by rememberMutableStateOf { false }
+//        var listData by rememberMutableStateOf { mutableListOf<String>() }
+        val listData = remember { mutableStateListOf<String>() }
+
+        // 初始数据加载（建议放在 LaunchedEffect 中避免重复执行）
+        LaunchedEffect(Unit) {
+            repeat(20) {
+                listData.add("列表数据 ${it}")
+            }
+        }
+
         VerticalRefreshableLayout(
             //顶部刷新的状态
             topRefreshLayoutState = createState(),
@@ -163,22 +175,29 @@ class RefreshLayoutActivity : BaseComposeActivity() {
             bottomRefreshLayoutState = rememberRefreshLayoutState(onRefreshListener = {
                 mainScope.launch {
                     "加载数据了".showToast()
+
                     delay(2000)
                     setRefreshState(RefreshContentStateEnum.Stop)
-                    isLoadFinish = true
-                    isLoadMoreFail = true
+                    isLoadFinish = false
+                    isLoadMoreFail = false
+                    repeat(20) {
+                        listData.add("新数据 ${it}}")
+                    }
                 }
             }), modifier = M
                 .fillMaxWidth()
                 .height(300.dp),
             // todo xfhy: test
+            // 上拉加载没有更多数据了,则赋值为true
             bottomIsLoadFinish = false //isLoadFinish
         ) {
             LazyColumn(modifier = M.fillMaxSize(), content = {
-                repeat(20) {
-                    item(key = it) {
-                        Text(text = "列表${it + 1}")
-                    }
+                items(listData) {
+                    Text(
+                        text = it.toString(),
+                        M.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                    )
                 }
             })
         }

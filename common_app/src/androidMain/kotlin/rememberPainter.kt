@@ -20,13 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 
-/**
- * 根据图片文件名加载图片
- */
-@Composable
-actual fun resourcePainter(imageName: String): Painter = androidx.compose.ui.res.painterResource(
-    getDrawableId(imageName, LocalContext.current)
-)
+///**
+// * 根据图片文件名加载图片
+// */
+//@Composable
+//actual fun resourcePainter(imageName: String): Painter = androidx.compose.ui.res.painterResource(
+//    getDrawableId(imageName, LocalContext.current)
+//)
 
 private fun getDrawableId(imageName: String, context: Context) = context.resources.getIdentifier(
     imageName, "drawable", context.packageName
