@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.painter.Painter
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 private const val IMG_FILE_BEGIN = "drawable-xxhdpi/"
 private const val IMG_FILE_ENDING = ".webp"
-
-/**
- * 根据图片文件名加载图片
- */
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-actual fun resourcePainter(imageName: String): Painter {
-    return painterResource(remember(imageName) { DrawableResource(IMG_FILE_BEGIN + imageName + IMG_FILE_ENDING) })
-}
+//
+///**
+// * 根据图片文件名加载图片
+// */
+//@OptIn(InternalResourceApi::class)
+//@Composable
+//actual fun resourcePainter(imageName: String): Painter {
+//    return painterResource(remember(imageName){})
+//}
 
 actual fun getTestIndex(): Int {
     return -1

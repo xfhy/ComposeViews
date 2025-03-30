@@ -18,6 +18,7 @@ package com.lt.common_app.base
 
 import androidx.compose.runtime.*
 import com.lt.common_app.MainActivity
+import com.lt.common_app.RefreshLayoutActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -27,7 +28,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import newInstance
+//import newInstance
 import kotlin.reflect.KClass
 
 /**
@@ -67,8 +68,19 @@ actual abstract class BaseComposeActivity actual constructor() {
     }
 
     actual fun jump(clazz: KClass<out BaseComposeActivity>) {
-        val a = clazz.newInstance()
-        _activityStack.add(a)
+        // todo xfhy 这里原作者的有问题,iOS编译报错
+//        val a = clazz.newInstance()
+//        _activityStack.add(a)
+
+        val instance = when (clazz) {
+            MainActivity::class -> MainActivity()
+            RefreshLayoutActivity::class -> RefreshLayoutActivity()
+            // todo xfhy: 需要什么页面,就在这里加上
+            else -> null
+        }
+        instance?.let {
+            _activityStack.add(it)
+        }
     }
 
     companion object {

@@ -37,6 +37,7 @@ import com.lt.compose_views.other.FpsText
 import com.lt.compose_views.other.VerticalSpace
 import com.lt.compose_views.refresh_layout.*
 import com.lt.compose_views.refresh_layout.refresh_content.EllipseRefreshContent
+import com.lt.compose_views.refresh_layout.refresh_content.bottom.LoadMoreRefreshAndFailContent
 import com.lt.compose_views.util.ComposePosition
 import com.lt.compose_views.util.rememberMutableStateOf
 import kotlinx.coroutines.delay
@@ -49,36 +50,44 @@ class RefreshLayoutActivity : BaseComposeActivity() {
         val bottomRefreshState = createState()
         val startRefreshState = createState()
         val endRefreshState = createState()
-        LaunchedEffect(key1 = Unit) {
-            topRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
-            bottomRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
-            startRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
-            endRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
-        }
+//        LaunchedEffect(key1 = Unit) {
+//            topRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
+//            bottomRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
+//            startRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
+//            endRefreshState.setRefreshState(RefreshContentStateEnum.Refreshing)
+//        }
 
         Row {
-            Column(
-                M
-                    .fillMaxHeight()
-                    .width(260.dp)
-                    .background(Color.LightGray)
-            ) {
-                Menu(topRefreshState, bottomRefreshState, startRefreshState, endRefreshState)
-
-                TopRefreshLayout(topRefreshState)
-                VerticalSpace(dp = 20)
-                BottomRefreshLayout(bottomRefreshState)
-                VerticalSpace(dp = 20)
-                StartRefreshLayout(startRefreshState)
-                VerticalSpace(dp = 20)
-                EndRefreshLayout(endRefreshState)
-            }
+            // todo xfhy: test
+//            Column(
+//                M
+//                    .fillMaxHeight()
+//                    .width(260.dp)
+//                    .background(Color.LightGray)
+//            ) {
+//                Menu(topRefreshState, bottomRefreshState, startRefreshState, endRefreshState)
+//
+//                // 顶部刷新
+//                TopRefreshLayout(topRefreshState)
+//                VerticalSpace(dp = 20)
+//                // 底部刷新
+//                BottomRefreshLayout(bottomRefreshState)
+//                VerticalSpace(dp = 20)
+//                // 左边刷新
+//                StartRefreshLayout(startRefreshState)
+//                VerticalSpace(dp = 20)
+//                // 右边刷新
+//                EndRefreshLayout(endRefreshState)
+//            }
             Column(M.fillMaxSize()) {
-                MyPullToRefresh()
+                // 只有下拉刷新
+//                MyPullToRefresh()
                 VerticalSpace(dp = 20)
+                // 有下拉刷新\上拉加载\上拉加载失败(我加的)\上拉加载成功
                 MyRefreshableLazyColumn()
                 VerticalSpace(dp = 20)
-                MyRefreshablePager()
+                // 竖向的viewPager,类似.    有下拉刷新
+//                MyRefreshablePager()
             }
         }
     }
@@ -135,9 +144,21 @@ class RefreshLayoutActivity : BaseComposeActivity() {
     @Composable
     private fun MyRefreshableLazyColumn() {
         var isLoadFinish by rememberMutableStateOf { false }
+        var isLoadMoreFail by rememberMutableStateOf { false }
         VerticalRefreshableLayout(
             //顶部刷新的状态
             topRefreshLayoutState = createState(),
+            bottomRefreshContent = {
+                LoadMoreRefreshAndFailContent(
+                    isLoadFinish = isLoadFinish,
+                    isLoadFail = isLoadMoreFail,
+                    retry = {
+                        isLoadMoreFail = false
+                        isLoadFinish = false
+                        "重试".showToast()
+                    }
+                )
+            },
             //底部刷新的状态
             bottomRefreshLayoutState = rememberRefreshLayoutState(onRefreshListener = {
                 mainScope.launch {
@@ -145,16 +166,18 @@ class RefreshLayoutActivity : BaseComposeActivity() {
                     delay(2000)
                     setRefreshState(RefreshContentStateEnum.Stop)
                     isLoadFinish = true
+                    isLoadMoreFail = true
                 }
             }), modifier = M
                 .fillMaxWidth()
                 .height(300.dp),
-            bottomIsLoadFinish = isLoadFinish
+            // todo xfhy: test
+            bottomIsLoadFinish = false //isLoadFinish
         ) {
             LazyColumn(modifier = M.fillMaxSize(), content = {
                 repeat(20) {
                     item(key = it) {
-                        Text(text = "内容区域${it + 1}")
+                        Text(text = "列表${it + 1}")
                     }
                 }
             })
@@ -196,6 +219,7 @@ class RefreshLayoutActivity : BaseComposeActivity() {
     private fun TopRefreshLayout(refreshState: RefreshLayoutState) {
         RefreshLayout(
             {
+                // header
                 Box(M.fillMaxWidth()) {
                     Text(
                         text = "下拉刷新",

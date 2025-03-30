@@ -41,7 +41,6 @@ import com.lt.ltttttttttttt.common_app.generated.resources.Res
 import com.lt.ltttttttttttt.common_app.generated.resources.ic_launcher_test
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import resourcePainter
 import kotlin.random.Random
 
 /**

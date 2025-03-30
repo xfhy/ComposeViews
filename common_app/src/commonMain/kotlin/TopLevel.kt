@@ -35,8 +35,8 @@ expect fun rememberPainter(data: String?): Painter
 /**
  * 根据图片文件名加载图片
  */
-@Composable
-expect fun resourcePainter(imageName: String): Painter
+//@Composable
+//expect fun resourcePainter(imageName: String): Painter
 
 //获取测试页面索引
 expect fun getTestIndex(): Int
